@@ -1,3 +1,5 @@
+import tweepy
+from tweepy import Cursor
 def connect():
     consumer_key="QomNnhW10Ua5u0r5m7BpuG2lm"
     consumer_secret="TptWkzflOsQ8lJNxL3m4qwfKCVSGigg9bncbgC1aZ9tNJrQnFR"
