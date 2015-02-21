@@ -16,6 +16,35 @@ class NeoGraph():
         except:
             pass
 
+    def add_tweet_to_user(self, tweet):
+        data = {'tweet_id': tweet.id,
+                'id': tweet.user.id_str,
+                'text': tweet.text,
+                'lat': tweet.coordinates[u"coordinates"][1],
+                'long': tweet.coordinates[u"coordinates"][0],
+                }
+        query_string = """
+        MATCH (u:User)
+        WHERE u.id_str = {id}
+        CREATE (tweet:Tweet { text:{text}, id:{tweet_id}})
+        CREATE (u)-[:TWEETED]->(tweet);
+        """
+        self.graph_db.cypher.execute_one(query_string, data)
+
+    def add_hash_to_tweet(self, tweet):
+        hashes = [i[u"text"] for i in tweet.entities.get(u"hashtags")]
+        for i in hashes:
+            data = {'tweet_id': tweet.id,
+                    'hash': i
+                    }
+            query_string = """
+            MATCH (t:Tweet)
+            WHERE t.id = {tweet_id}
+            CREATE (hash:Hash { text:{hash}})
+            CREATE (t)-[:CONTAINS]->(hash);
+            """
+            self.graph_db.cypher.execute_one(query_string, data)
+
     def create_or_get_node(self, twitter_user, labels=[]):
         data = {'id_str': twitter_user.id_str,
                 'name': twitter_user.name,
