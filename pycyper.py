@@ -39,7 +39,7 @@ class NeoGraph():
         query_string = """
             MERGE (u:User {id_str:{id_str}})
             ON CREATE SET
-    """ + (('u:' + ',u:'.join(labels) + ",") if labels else '') + """
+            u:
                 u.name={name},
                 u.screen_name={screen_name},
                 u.description={description},
@@ -57,8 +57,8 @@ class NeoGraph():
                 u.geo_enabled={geo_enabled},
                 u.verified={verified},
                 u.notifications={notifications}
-    """ + (("ON MATCH SET\n  u:" + ',u:'.join(labels)) if labels else '') + """
-            RETURN u
+                ON MATCH SET\n  u:
+                RETURN u
         """
         self.graph_db.cypher.execute_one(query_string, data)
 
